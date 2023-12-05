@@ -21,7 +21,7 @@ class Solver
   end
 
   def seed_to_location(seed)
-    return start_to_finish_map[seed] if start_to_finish_map.has_key?(seed)
+    return @start_to_finish_map[seed] if @start_to_finish_map.has_key?(seed)
 
     set_keys = mappers.keys
     step_value = seed
@@ -31,8 +31,8 @@ class Solver
 
     start_to_finish_map[seed] = step_value
 
-    if lowest_location.nil? || step_value < lowest_location
-      lowest_location = step_value
+    if @lowest_location.nil? || step_value < @lowest_location
+      @lowest_location = step_value
     end
 
     nil
