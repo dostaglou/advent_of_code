@@ -1,28 +1,41 @@
 require_relative '../file_manager'
 
 class Solver
-  attr_accessor :data, :mappers, :seeds
+  attr_accessor :data, :mappers, :seeds, :start_to_finish_map, :lowest_location
 
   def initialize(data_array)
     @seeds = []
     @data = parse_data(data_array)
     @mappers = {}
+    @start_to_finish_map = {}
+    @lowest_location = nil
     build_mappers
   end
 
   def solve
-    locations = @seeds.map { |x| seed_to_location(x) }
-    locations.min
+    seeds.each do |seed|
+      seed_to_location(seed)
+    end
+
+    lowest_location
   end
 
   def seed_to_location(seed)
-    set_keys = @mappers.keys
+    return start_to_finish_map[seed] if start_to_finish_map.has_key?(seed)
+
+    set_keys = mappers.keys
     step_value = seed
     set_keys.each do |key|
-      step_value = transver_map(step_value, @mappers[key])
+      step_value = transver_map(step_value, mappers[key])
     end
 
-    step_value
+    start_to_finish_map[seed] = step_value
+
+    if lowest_location.nil? || step_value < lowest_location
+      lowest_location = step_value
+    end
+
+    nil
   end
 
   def transver_map(starting_number, data_sets)
@@ -36,8 +49,12 @@ class Solver
 
   def parse_data(data_array)
     data_array.reject! { |x| x == "" }
-    @seeds = data_array.shift.split(":")[1].split(" ").map(&:to_i)
+    set_seeds!(data_array)
     data_array
+  end
+
+  def set_seeds!(data_array)
+    @seeds = data_array.shift.split(":")[1].split(" ").map(&:to_i)
   end
 
   def build_mappers
@@ -56,4 +73,5 @@ class Solver
   end
 end
 
-# Solver.new(DATA).solve
+# s = Solver.new(FileManager.new("day5").stripped_data("text.txt"))
+# s.solve
