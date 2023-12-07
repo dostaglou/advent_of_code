@@ -4,7 +4,6 @@ INTEGERS = %w(1 2 3 4 5 6 7 8 9 0)
 EXCLUDE_CHARS = %w(1 2 3 4 5 6 7 8 9 0 .)
 LINE_LENGTH = 140
 
-# Does not arrive at correct solution
 class Solver
   attr_accessor :data_array, :string, :valids
   def initialize(data)
@@ -20,7 +19,11 @@ class Solver
     last = string.length - 1
 
     string.each_char.with_index do |char, index|
-      if INTEGERS.include?(char)
+      if index % 140 == 0 # prevent carrying over number across line break
+        valid_numbers << current_number.to_i if current_number_counted
+        current_number = ""
+        current_number_counted = false
+      elsif INTEGERS.include?(char)
         current_number << char
         current_number_counted = true if will_count?(index)
       elsif current_number != "" || index == last
