@@ -45,7 +45,7 @@ class Hand
   end
 
   def determine_hand_strength
-    grouping = hand.group_by {|card| card }
+    grouping = hand.group_by(&:itself)
     max_group = 0
     grouping.each { |k, v| max_group = v.size if max_group < v.size }
 
